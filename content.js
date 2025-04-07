@@ -2,7 +2,7 @@
 
 // Function that creates and shows the popup (only if not already present)
 function createOrShowThePopup() {
-  // Only create if it doesn’t already exist
+  // Only create if it doesn't already exist
   if (!document.getElementById('break-reminder-popup')) {
     const popup = document.createElement('div');
     popup.id = 'break-reminder-popup';
@@ -13,12 +13,48 @@ function createOrShowThePopup() {
     popup.style.height = 'auto';
     popup.style.backgroundColor = '#fff';
     popup.style.border = '1px solid #000';
-    popup.style.borderRadius = '24px';
+    popup.style.borderRadius = '12px';
     popup.style.padding = '32px 24px';
     popup.style.boxShadow = '0px 4px 8px rgba(0, 0, 0, 0.1)';
     popup.style.zIndex = '10000';
     popup.style.opacity = '1';
     popup.style.animation = 'slideIn 0.5s forwards ease-out';
+
+    const image = document.createElement('img');
+    const imagePath = chrome.runtime.getURL('icons/glasslotus.png');
+    console.log("🔍 Debug - Image path:", imagePath);
+    console.log("🔍 Debug - Extension ID:", chrome.runtime.id);
+    
+    // Pre-check if the image is accessible
+    fetch(imagePath)
+      .then(response => {
+        console.log("🔍 Debug - Image fetch response:", response.status, response.statusText);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      })
+      .catch(error => console.error("🔍 Debug - Image fetch error:", error));
+
+    image.src = imagePath;
+    image.alt = 'GlassLotus';
+    image.style.width = '100px';
+    image.style.maxWidth = '100%';
+    image.style.height = 'auto';
+    image.style.display = 'block';
+    image.style.marginBottom = '20px';
+    
+    image.onload = () => {
+        console.log("✅ Image loaded successfully!");
+        console.log("Image dimensions:", image.naturalWidth, "x", image.naturalHeight);
+    };
+    
+    image.onerror = (error) => {
+        console.error("❌ Image failed to load:", {
+            path: imagePath,
+            error: error
+        });
+    };
+
+    // Add the image to the popup
+    popup.appendChild(image);
 
     const title = document.createElement('h2');
     title.textContent = "You've been working for a while! 🙌";
