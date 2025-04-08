@@ -1,14 +1,21 @@
 // content.js
 
 function createOrShowThePopup() {
+  console.log("🔍 Creating popup...");
   const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Remove existing popup and overlay if they exist
   const existingPopup = document.getElementById('break-reminder-popup');
-  if (existingPopup) existingPopup.remove();
+  if (existingPopup) {
+    console.log("Removing existing popup");
+    existingPopup.remove();
+  }
   const existingOverlay = document.getElementById('break-reminder-overlay');
-  if (existingOverlay) existingOverlay.remove();
+  if (existingOverlay) {
+    console.log("Removing existing overlay");
+    existingOverlay.remove();
+  }
 
   // Create dimmed overlay
   const overlay = document.createElement('div');
@@ -27,21 +34,21 @@ function createOrShowThePopup() {
   const popup = document.createElement('div');
   popup.id = 'break-reminder-popup';
   popup.style.position = 'fixed';
-  popup.style.top = '50%';
-  popup.style.left = '50%';
-  popup.style.transform = 'translate(-50%, -50%)';
+  popup.style.top = '20px';
+  popup.style.right = '20px';
+  popup.style.transform = 'none';
   popup.style.width = '400px';
   popup.style.padding = '32px 24px';
-  popup.style.borderRadius = '24px';
+  popup.style.borderRadius = '12px';
   popup.style.zIndex = '10000';
-  popup.style.animation = 'slideIn 0.5s forwards ease-out';
+  popup.style.fontFamily = 'Arial, sans-serif';
 
   // Glassmorphism styles with dark mode handling
   popup.style.backdropFilter = 'blur(16px) saturate(180%)';
   popup.style.webkitBackdropFilter = 'blur(16px) saturate(180%)';
 
   if (isDarkMode) {
-    popup.style.backgroundColor = 'rgba(30, 30, 30, 0.6)';
+    popup.style.backgroundColor = 'rgba(20, 20, 20, 0.6)';
     popup.style.color = '#eee';
     popup.style.border = '1px solid rgba(255, 255, 255, 0.2)';
     popup.style.boxShadow = '0 0 24px rgba(255, 255, 255, 0.15)';
@@ -67,25 +74,22 @@ function createOrShowThePopup() {
 
   // Image
   const image = document.createElement('img');
-  const imagePath = chrome.runtime.getURL('icons/lotus.png');
-  console.log("🔍 Debug - Attempting to load image from:", imagePath);
-  
-  image.src = imagePath;
+  image.src = chrome.runtime.getURL('icons/lotus.png');
   image.alt = 'Lotus';
-  image.style.width = '100%';
-  image.style.maxWidth = '200px';
+  image.style.width = '100px';
+  image.style.maxWidth = '100%';
   image.style.height = 'auto';
   image.style.display = 'block';
   image.style.margin = '0 auto 20px auto';
 
   image.onload = () => {
-    console.log("✅ Image loaded successfully from:", imagePath);
+    console.log("✅ Image loaded successfully from:", image.src);
     console.log("Image dimensions:", image.naturalWidth, "x", image.naturalHeight);
   };
   
   image.onerror = (error) => {
     console.error("❌ Image failed to load:", {
-      path: imagePath,
+      path: image.src,
       error: error,
       runtimeURL: chrome.runtime.getURL(''),
       extensionId: chrome.runtime.id
@@ -97,7 +101,7 @@ function createOrShowThePopup() {
   // Title
   const title = document.createElement('h2');
   title.textContent = "Great job! You deserve a break.";
-  title.style.fontSize = '32px';
+  title.style.fontSize = '24px';
   title.style.fontWeight = '500';
   title.style.marginBottom = '8px';
   title.style.textAlign = 'center';
@@ -128,6 +132,7 @@ function createOrShowThePopup() {
   okayButton.style.border = 'none';
   okayButton.style.borderRadius = '6px';
   okayButton.style.cursor = 'pointer';
+  okayButton.style.fontSize = '16px';
 
   okayButton.onclick = () => {
     if (!prefersReducedMotion) {
@@ -150,6 +155,7 @@ function createOrShowThePopup() {
   remindButton.style.color = isDarkMode ? '#ccc' : '#000';
   remindButton.style.borderRadius = '6px';
   remindButton.style.cursor = 'pointer';
+  remindButton.style.fontSize = '16px';
 
   remindButton.onclick = () => {
     if (!prefersReducedMotion) {
@@ -170,6 +176,7 @@ function createOrShowThePopup() {
   // Append to DOM
   document.body.appendChild(overlay);
   document.body.appendChild(popup);
+  console.log("✅ Popup created and added to DOM");
 
   // Inject CSS animations once
   if (!document.querySelector('style[data-popup-style]')) {
@@ -179,21 +186,21 @@ function createOrShowThePopup() {
       @keyframes slideIn {
         from {
           opacity: 0;
-          transform: translate(-50%, -60%);
+          transform: translateY(-20px);
         }
         to {
           opacity: 1;
-          transform: translate(-50%, -50%);
+          transform: translateY(0);
         }
       }
       @keyframes slideOut {
         from {
           opacity: 1;
-          transform: translate(-50%, -50%);
+          transform: translateY(0);
         }
         to {
           opacity: 0;
-          transform: translate(-50%, -60%);
+          transform: translateY(-20px);
         }
       }
       @keyframes fadeIn {
@@ -210,9 +217,14 @@ function createOrShowThePopup() {
 }
 
 // Listen for background trigger
+console.log("🎧 Content script loaded and listening for messages");
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log("📨 Message received in content script:", message);
   if (message.action === "showPopup") {
+    console.log("🔔 Show popup message received");
     createOrShowThePopup();
+    sendResponse({ success: true });
   }
+  return true; // Keep the message channel open for async response
 });
 
