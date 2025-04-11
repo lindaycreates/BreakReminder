@@ -1,27 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Break Reminder</title>
+  <meta charset="UTF-8" />
+  <title>Set break reminder</title>
   <style>
     body {
+      margin: 0;
+      padding: 24px;
+      width: 260px;
       font-family: Arial, sans-serif;
-      margin: 20px;
+      background-color: #f6f6f6;
+      color: #1c1c1c;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
     }
-    input {
-      width: 50px;
-      text-align: center;
+
+    @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #1c1c1c;
+      color: #f6f6f6;
     }
+
+    select {
+      background-color: #111;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    option {
+      color: #fff;
+      background-color: #111;
+    }
+
     button {
-      margin-top: 10px;
-      padding: 5px 10px;
+      background-color: #0A84FF;
+    }
+  }
+
+
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 4px;
+      margin-bottom: 16px;
+    }
+
+    .picker-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      font-size: 18px;
+      font-weight: 500;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      background-color: white;
+      color: #242424; /* ✅ Make text visible against white */
+      text-align: center;
+      width: 80px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005FCC;
     }
   </style>
 </head>
 <body>
-  <h2>Set Break Reminder</h2>
-  <label for="timeInterval">Time (minutes): </label>
-  <input id="timeInterval" type="number" min="1" />
-  <button id="saveButton">Save</button>
+  <h1>Set break reminder</h1>
+
+  <div class="picker-container">
+    <div>
+      <select id="hours"></select>
+      <div style="text-align: center;">Hours</div>
+    </div>
+    <div>
+      <select id="minutes"></select>
+      <div style="text-align: center;">Minutes</div>
+    </div>
+  </div>
+
+  <button id="save">Set timer</button>
+  <div id="confirmationMessage" style="display:none; margin: 12px auto 0 auto; font-size:14px; color:rgb(247, 247, 247); text-align:center; width: fit-content;">
+    ✅ Timer set.
+  </div>  
+
   <script src="popup.js"></script>
 </body>
 </html>
